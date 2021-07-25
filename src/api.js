@@ -1,7 +1,3 @@
-// import express from "express";
-// import request from "request";
-// import dotenv from "dotenv";
-// import serverless from "serverless-http";
 const express = require("express");
 const request = require("request");
 const dotenv = require("dotenv");
