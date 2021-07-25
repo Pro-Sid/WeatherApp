@@ -1,17 +1,24 @@
-import express from "express";
-import request from "request";
-import dotenv from "dotenv";
+// import express from "express";
+// import request from "request";
+// import dotenv from "dotenv";
+// import serverless from "serverless-http";
+const express = require("express");
+const request = require("request");
+const dotenv = require("dotenv");
+const serverless = require("serverless-http");
 
 dotenv.config();
 const BASE_URL = "http://api.openweathermap.org/data/2.5/";
 const app = express();
 
-app.use((req, res, next) => {
+const router = express.Router();
+
+app.use('/.netlify/functions/api', (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
 
-app.get("/day", (req, res) => {
+router.get("/day", (req, res) => {
   request(
     {
       url: `${BASE_URL}weather?q=${req.query.city}&appid=${process.env.API_KEY}`,
@@ -25,7 +32,7 @@ app.get("/day", (req, res) => {
   );
 });
 
-app.get("/nextDay", (req, res) => {
+router.get("/nextDay", (req, res) => {
   request(
     {
       url: `${BASE_URL}forecast?q=${req.query.city}&appid=${process.env.API_KEY}`,
@@ -39,7 +46,7 @@ app.get("/nextDay", (req, res) => {
   );
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is up at port ${PORT}`);
-});
+app.use('/.netlify/functions/api', router);
+
+module.exports = app;
+module.exports.handler = serverless(app);
